@@ -9,16 +9,18 @@ import Certificate from "@assets/images/certificate.svg";
 import Intern from "@assets/images/intern.svg";
 import Project from "@assets/images/project.svg";
 import AddIcon from "@assets/images/add-blue.svg";
-
-import SpecContest from "@screens/SpecContest";
-import SpecCertificate from "@screens/SpecCertificate";
-import SpecIntern from "@screens/SpecIntern";
-import SpecActivity from "@screens/SpecActivity";
-import SpecProject from "@screens/SpecProject";
+import SpecCategorySelect from "@screens/SpecCategorySelect";
+import SpecDetail from "@screens/SpecDetail";
 
 type SpecScreenProps = NativeStackScreenProps<SpecScreenStackParamList, "Spec">;
 
 function Spec({ navigation }: Readonly<SpecScreenProps>) {
+  const [isCategorySelectOpen, setIsCategorySelectOpen] = React.useState(false);
+
+  const handleAddSpecPress = () => {
+    setIsCategorySelectOpen(true);
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -83,8 +85,8 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
     },
     {
       id: 5,
-      name: "저쩌구 논문",
-      category: "project",
+      name: "KT Y 퓨터리스트",
+      category: "activity",
       startDate: "2024-02-01",
       endDate: "2024-05-31",
       completed: true,
@@ -122,33 +124,11 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
     }
   };
 
-  const navigateToSpecComponent = (category: string, id: number) => {
-    switch (category) {
-      case "contest":
-        navigation.navigate("SpecContest", { id });
-        break;
-      case "certificate":
-        navigation.navigate("SpecCertificate", { id });
-        break;
-      case "intern":
-        navigation.navigate("SpecIntern", { id });
-        break;
-      case "activity":
-        navigation.navigate("SpecActivity", { id });
-        break;
-      case "project":
-        navigation.navigate("SpecProject", { id });
-        break;
-      default:
-        break;
-    }
-  };
-
   // 각 스펙 클릭 이벤트 핸들러
-  const handleSpecClick = (id: number) => {
+  const handleSpecClick = (id: number, category: string) => {
     console.log(`스펙 ID ${id}를 클릭 - 개별 페이지로 이동.`);
-    // SpecDetail 스크린으로 이동하면서 id 전달
-    // navigation.navigate("SpecDetail", { id });
+    // SpecDetail 스크린으로 이동하면서 category, id 전달
+    navigation.navigate("SpecDetail", { id, category });
   };
 
   const renderItem = ({ item }: { item: Readonly<SpecBase> }) => {
@@ -159,8 +139,7 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
         style={{ borderRadius: 10 }}
         onPress={() => {
           console.log(`${item.id}번 스펙을 클릭했습니다.`);
-          // handleSpecClick(item.id);
-          navigateToSpecComponent(item.category, item.id);
+          handleSpecClick(item.id, item.category);
         }}
       >
         <View>
@@ -226,29 +205,58 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
           </Pressable>
         ))}
       </View>
-      <FlatList
-        contentContainerStyle={{
-          gap: 15,
-          paddingVertical: 20,
-          paddingHorizontal: 20,
-        }}
-        data={specList}
-        renderItem={renderItem}
-        keyExtractor={(item) => `${item.id}`}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <Button
-            label="스펙 추가하기"
-            callbackFn={() => console.log("스펙 추가 버튼을 눌렀습니다.")}
-          />
-        }
-      />
-      <Pressable
-        className="absolute right-[22] bottom-[22]"
-        onPress={() => console.log("스펙 추가 버튼을 눌렀습니다.")}
-      >
-        <AddIcon />
-      </Pressable>
+      <View style={{ flex: 1 }}>
+        <FlatList
+          contentContainerStyle={{
+            gap: 15,
+            paddingVertical: 20,
+            paddingHorizontal: 20,
+          }}
+          data={specList}
+          renderItem={renderItem}
+          keyExtractor={(item) => `${item.id}`}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <Button
+              label="스펙 추가하기"
+              callbackFn={() => setIsCategorySelectOpen(true)}
+            />
+          }
+        />
+        <Pressable
+          style={{
+            position: "absolute",
+            right: 22,
+            bottom: 22,
+          }}
+          onPress={() => setIsCategorySelectOpen(true)}
+        >
+          <AddIcon />
+        </Pressable>
+        {/* SpecCategorySelect 레이어 팝업 */}
+        {isCategorySelectOpen && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <SpecCategorySelect
+              onClose={() => setIsCategorySelectOpen(false)}
+              onSelectCategory={(category) => {
+                setIsCategorySelectOpen(false);
+                // 선택된 카테고리 처리 로직 추가
+              }}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 }
