@@ -181,6 +181,7 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
 
   return (
     <View className="flex-1 relative">
+      {/* 상단 바 및 메뉴 버튼 */}
       <View className="flex-row justify-between gap-[8] py-[23] px-[20] border-b border-b-[#ECEBEB]">
         {MENU.map((v) => (
           <Pressable
@@ -205,6 +206,7 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
           </Pressable>
         ))}
       </View>
+      {/* 스펙 목록 */}
       <View style={{ flex: 1 }}>
         <FlatList
           contentContainerStyle={{
@@ -223,6 +225,7 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
             />
           }
         />
+        {/* 스펙 추가 버튼 */}
         <Pressable
           style={{
             position: "absolute",
@@ -233,7 +236,7 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
         >
           <AddIcon />
         </Pressable>
-        {/* SpecCategorySelect 레이어 팝업 */}
+        {/* 스펙 카테고리 선택 레이어 팝업 */}
         {isCategorySelectOpen && (
           <View
             style={{
@@ -242,9 +245,9 @@ function Spec({ navigation }: Readonly<SpecScreenProps>) {
               left: 0,
               right: 0,
               bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // 회색 배경
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           >
             <SpecCategorySelect
